@@ -1,0 +1,10 @@
+*
+!.gitignore
+!README*
+!*.*
+!/scripts/**/*
+*.class
+*.exe
+*.py[cod]
+!/**/
+__pycache__/

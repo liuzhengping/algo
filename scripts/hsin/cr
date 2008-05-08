@@ -1,0 +1,10 @@
+#! /bin/bash
+if [ $# -lt 1 ]; then
+  echo Nema parametra 
+  exit
+elif [ g++ $1.cpp -o $1.exe -O2 ]
+  ./$1.exe
+  exit
+fi
+echo GRESKE U KOMPAJLANJU!!!
+exit

@@ -1,0 +1,11 @@
+#! /bin/bash
+
+if g++ $1.cpp -o $1.exe -O2
+then
+  for((i=0; i < 3; ++i)); do
+    time ./$1.exe < $1.in.$i
+    echo $?
+  done
+else
+  echo COMPILE ERRORS:
+fi

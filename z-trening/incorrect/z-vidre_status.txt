@@ -1,0 +1,148 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <sstream>
+#include <algorithm>
+#define FC(it, c) for(__typeof((c).begin()) it = (c).begin(); it != (c).end(); ++it)
+#define MAX 805
+using namespace std;
+typedef pair<int, int> par;
+const int inf = 1000000000;
+int n, m, source, sink, sol;
+int cap[MAX][MAX], h[MAX], bio[MAX], pred[MAX];
+vector< vector<par> > adj;
+int path() {
+  memset(pred, -1, sizeof(pred));
+  memset(bio, 0, sizeof(bio));
+  for(int i = 0; i < 2*n; ++i)
+    h[i] = inf;
+  h[source] = 0;
+  while(true) {
+    int u = -1, cf = inf;
+    for(int i = 0; i < 2*n; ++i) {
+      if(!bio[i] && h[i] < cf) {
+        cf = h[i];
+        u = i;
+      }
+    }
+    if(u == -1) break;
+    if(u == sink)  break;
+    bio[u] = 1;
+    FC(it, adj[u]) {
+      if(cap[u][it->first] > 0 && !bio[it->first]) {
+        if( h[it->first] > max( h[u], it->second ) ) {
+          h[it->first] = max( h[u], it->second );
+          pred[it->first] = u;
+        }
+      }
+    }
+  }
+  if(h[sink] == inf) return 0;
+  int path_cap = inf;
+  for(int curr = sink; curr != source; curr = pred[curr])
+    path_cap <?= cap[ pred[curr] ][ curr ];
+  for(int curr = sink; curr != source; curr = pred[curr]) {
+    cap[ pred[curr] ][ curr ] -= path_cap;
+    cap[ curr ][ pred[curr] ] += path_cap;
+    sol >?= h[curr];
+  }
+  return path_cap;
+}
+void solve() {
+  while( path() ) ;
+  if(sol == inf) printf("0\n");
+  else printf("%d\n", sol);
+}
+void input() {
+  scanf("%d%d", &m, &n);
+  ++n;
+  source = 0;
+  sink = 1;
+  adj.resize(n<<1);
+  
+  for(int i = 0; i < m; ++i) {
+    int a, b, c;
+    scanf("%d%d%d", &c, &a, &b);
+    adj[(a<<1)+1].push_back( par(b<<1, c) );
+    adj[(b<<1)+1].push_back( par(a<<1, c) );
+    cap[(a<<1)+1][b<<1] = 1;
+    cap[(b<<1)+1][a<<1] = 1;
+  }
+  
+  for(int i = 1; i < n; ++i) {
+    adj[i<<1].push_back( par((i<<1)+1, 0) );
+    cap[i<<1][(i<<1)+1] = 1;
+  }
+  
+  int k;
+  scanf("%d", &k);
+  for(int i = 0; i < k; ++i) {
+    int x; scanf("%d", &x);
+    adj[source].push_back( par(x<<1, 0) );
+    cap[source][x<<1] = 1;
+  }
+  scanf("%d", &k);
+  for(int i = 0; i < k; ++i) {
+    int x; scanf("%d", &x);
+    adj[(x<<1)+1].push_back( par(sink, 0) );
+    cap[(x<<1)+1][sink] = 1;
+  }
+}
+int main() {
+  input();
+  solve();
+  return 0;
+}
+/*
+Test 1	Tacno resenje	 vreme izvrsavanja programa 0 sekunde
+Test 2	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 3	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 4	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 5	Tacno resenje	vreme izvrsavanja programa 0 sekunde
+Test 6	Tacno resenje	vreme izvrsavanja programa 0 sekunde
+Test 7	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 8	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 9	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 10	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 11	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 12	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 13	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 14	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 15	Tacno resenje	vreme izvrsavanja programa 0 sekunde
+Test 16	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 17	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 18	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 19	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 20	Pogresno resenje	vreme izvrsavanja programa 0 sekunde
+Test 21	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 22	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 23	Tacno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 24	Tacno resenje	vreme izvrsavanja programa 0 sekunde
+Test 25	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 26	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 27	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 28	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 29	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 30	Tacno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 31	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 32	Tacno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 33	Tacno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 34	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 35	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 36	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 37	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 38	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 39	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 40	Pogresno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 41	Tacno resenje	vreme izvrsavanja programa 0.02 sekunde
+Test 42	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 43	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 44	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 45	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 46	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 47	Pogresno resenje	vreme izvrsavanja programa 0.04 sekunde
+Test 48	Pogresno resenje	vreme izvrsavanja programa 0.01 sekunde
+Test 49	Tacno resenje	vreme izvrsavanja programa 0.14 sekunde
+Test 50	Tacno resenje	vreme izvrsavanja programa 0.01 sekunde
+*/
